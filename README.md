@@ -290,5 +290,259 @@ Password (again):
 Superuser created successfully.
 Return to your browser. Log in with the superuser's credentials you chose; you should see the Django admin dashboard.
 
+Starting our Git repository
+Git tracks changes to a particular set of files in what's called a code repository (or "repo" for short). Let's start one for our project. Open up your console and run these commands, in the djangogirls directory:
+
+Note Check your current working directory with a pwd (Mac OS X/Linux) or cd (Windows) command before initializing the repository. You should be in the djangogirls folder.
+
+command-line
+$ git init
+Initialized empty Git repository in ~/djangogirls/.git/
+$ git config --global user.name "Your Name"
+$ git config --global user.email you@example.com
+Initializing the git repository is something we need to do only once per project (and you won't have to re-enter the username and email ever again).
+
+Git will track changes to all the files and folders in this directory, but there are some files we want it to ignore. We do this by creating a file called .gitignore in the base directory. Open up your editor and create a new file with the following contents:
+
+.gitignore
+*.pyc
+*~
+/.vscode
+__pycache__
+myvenv
+db.sqlite3
+/static
+.DS_Store
+And save it as .gitignore in the "djangogirls" folder.
+
+It's a good idea to use a git status command before git add or whenever you find yourself unsure of what has changed. This will help prevent any surprises from happening, such as wrong files being added or committed. The git status command returns information about any untracked/modified/staged files, the branch status, and much more. The output should be similar to the following:
+
+command-line
+$ git status
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        .gitignore
+        blog/
+        manage.py
+        mysite/
+        requirements.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+And finally we save our changes. Go to your console and run these commands:
+
+command-line
+$ git add --all .
+$ git commit -m "My Django Girls app, first commit"
+ [...]
+ 13 files changed, 200 insertions(+)
+ create mode 100644 .gitignore
+ [...]
+ create mode 100644 mysite/wsgi.py
+Pushing your code to GitHub
 
 
+Then, create a new repository, giving it the name "my-first-blog". Leave the "initialize with a README" checkbox unchecked, leave the .gitignore option blank (we've done that manually) and leave the License as None.
+
+
+Note The name my-first-blog is important – you could choose something else, but it's going to occur lots of times in the instructions below, and you'd have to substitute it each time. It's probably easier to stick with the name my-first-blog.
+
+On the next screen, you'll be shown your repo's clone URL, which you will use in some of the commands that follow:
+
+Now we need to hook up the Git repository on your computer to the one up on GitHub.
+
+Type the following into your console (replace <your-github-username> with the username you entered when you created your GitHub account, but without the angle-brackets -- the URL should match the clone URL you just saw):
+
+command-line
+$ git remote add origin https://github.com/<your-github-username>/my-first-blog.git
+$ git push -u origin master
+When you push to GitHub, you'll be asked for your GitHub username and password (either right there in the command-line window or in a pop-up window), and after entering credentials you should see something like this:
+
+command-line
+Counting objects: 6, done.
+Writing objects: 100% (6/6), 200 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To https://github.com/ola/my-first-blog.git
+ * [new branch]      master -> master
+Branch master set up to track remote branch master from origin.
+Your code is now on GitHub. Go and check it out! 
+
+Setting up our blog on PythonAnywhere
+
+Configuring our site on PythonAnywhere
+Go back to the main PythonAnywhere Dashboard by clicking on the logo, and choose the option to start a "Bash" console – that's the PythonAnywhere version of a command line, just like the one on your computer.
+
+
+
+PythonAnywhere command-line
+$ pip3.6 install --user pythonanywhere
+
+
+That should print out some things like Collecting pythonanywhere, and eventually end with a line saying Successfully installed (...) pythonanywhere- (...).
+
+PythonAnywhere command-line
+$ pa_autoconfigure_django.py --python=3.6 https://github.com/<your-github-username>/my-first-blog.git
+  
+PythonAnywhere command-line
+(ola.pythonanywhere.com) $ python manage.py createsuperuser
+
+
+Now, if you like, you can also take a look at your code on PythonAnywhere using ls:
+
+PythonAnywhere command-line
+(ola.pythonanywhere.com) $ ls
+blog  db.sqlite3  manage.py  mysite requirements.txt static
+(ola.pythonanywhere.com) $ ls blog/
+__init__.py  __pycache__  admin.py  apps.py  migrations  models.py
+tests.py  views.py
+
+
+
+
+Your first Django URL!
+
+Go ahead, add a line that will import blog.urls. You will also need to change the from django.urls… line because we are using the include function here, so you will need to add that import to the line.
+
+Your mysite/urls.py file should now look like this:
+
+mysite/urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('blog.urls')),
+]
+
+
+blog.urls
+Create a new empty file named urls.py in the blog directory, and open it in the code editor. All right! Add these first two lines:
+
+blog/urls.py
+from django.urls import path
+from . import views
+
+After that, we can add our first URL pattern:
+
+blog/urls.py
+urlpatterns = [
+    path('', views.post_list, name='post_list'),
+]
+
+Your console is showing an error, but don't worry – it's actually pretty useful: It's telling you that there is no attribute 'post_list'. That's the name of the view that Django is trying to find and use, but we haven't created it yet. At this stage, your /admin/ will also not work. No worries – we will get there. If you see a different error message, try restarting your web server. To do that, in the console window that is running the web server, stop it by pressing Ctrl+C (the Control and C keys together). On Windows, you might have to press Ctrl+Break. Then you need to restart the web server by running a python manage.py runserver command.
+
+Let's create a view as the comment suggests. Add the following minimal view below it:
+
+blog/views.py
+def post_list(request):
+    return render(request, 'blog/post_list.html', {})
+    
+
+Your first template!
+Creating a template means creating a template file. Everything is a file, right? You have probably noticed this already.
+
+Templates are saved in blog/templates/blog directory. So first create a directory called templates inside your blog directory. Then create another directory called blog inside your templates directory:
+
+blog
+└───templates
+    └───blog
+(You might wonder why we need two directories both called blog – as you will discover later, this is a useful naming convention that makes life easier when things start to get more complicated.)
+
+And now create a post_list.html file (just leave it blank for now) inside the blog/templates/blog directory.
+
+See how your website looks now: http://127.0.0.1:8000/
+
+If you still have an error TemplateDoesNotExist, try to restart your server. Go to the command line, stop the server by pressing Ctrl+C (Control and C keys together) and start it again by running a python manage.py runserver command.
+
+
+Open the new file in the code editor, and add the following:
+
+
+
+
+blog/templates/blog/post_list.html
+<html>
+<body>
+    <p>Hi there!</p>
+    <p>It works!</p>
+</body>
+</html>
+
+
+put a web page title element inside the <head>, like this:
+
+blog/templates/blog/post_list.html
+<html>
+    <head>
+        <title>Ola's blog</title>
+    </head>
+    <body>
+        <p>Hi there!</p>
+        <p>It works!</p>
+    </body>
+</html>
+Save the file and refresh your page.
+
+
+Here's an example of a full template, copy and paste it into blog/templates/blog/post_list.html:
+
+blog/templates/blog/post_list.html
+<html>
+    <head>
+        <title>Django Girls blog</title>
+    </head>
+    <body>
+        <div>
+            <h1><a href="/">Django Girls Blog</a></h1>
+        </div>
+
+        <div>
+            <p>published: 14.06.2014, 12:14</p>
+            <h2><a href="">My first post</a></h2>
+            <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+        </div>
+
+        <div>
+            <p>published: 14.06.2014, 12:14</p>
+            <h2><a href="">My second post</a></h2>
+            <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut f.</p>
+        </div>
+    </body>
+</html>
+
+
+One more thing: deploy!
+It'd be good to see all this out and live on the Internet, right? Let's do another PythonAnywhere deploy:
+
+Commit, and push your code up to GitHub
+First off, let's see what files have changed since we last deployed (run these commands locally, not on PythonAnywhere):
+
+command-line
+$ git status
+Make sure you're in the djangogirls directory and let's tell git to include all the changes in this directory:
+
+command-line
+$ git add --all .
+
+
+Before we upload all the files, let's check what git will be uploading (all the files that git will upload should now appear in green):
+
+command-line
+$ git status
+
+
+Once we've done that, we upload (push) our changes up to GitHub:
+
+command-line
+$ git push
+
+Pull your new code down to PythonAnywhere, and reload your web app
+Open up the PythonAnywhere consoles page and go to your Bash console (or start a new one). Then, run:
+PythonAnywhere command-line
+$ cd ~/<your-pythonanywhere-domain>.pythonanywhere.com
+$ git pull
+[...]
