@@ -65,4 +65,34 @@ then select the tab named "API token", and hit the button that says "Create new 
 The API token tab on the Account page
 
 We're going to create a small blog!
-![alt text](http://url/to/img.png)
+
+The first step is to start a new Django project. Basically, this means that we'll run some scripts provided by Django that will create the skeleton of a Django project for us. This is just a bunch of directories and files that we will use later.
+
+The names of some files and directories are very important for Django. You should not rename the files that we are about to create. Moving them to a different place is also not a good idea. Django needs to maintain a certain structure to be able to find important things.
+
+Remember to run everything in the virtualenv. If you don't see a prefix (myvenv) in your console, you need to activate your virtualenv. We explained how to do that in the Django installation chapter in the Working with virtualenv part.
+
+In your Mac OS X or Linux console, you should run the following command. Don't forget to add the period (or dot) . at the end!
+
+command-line
+(myvenv) ~/djangogirls$ django-admin startproject mysite .
+
+The period . is crucial because it tells the script to install Django in your current directory (for which the period . is a short-hand reference).
+
+
+
+django-admin.py is a script that will create the directories and files for you. You should now have a directory structure which looks like this:
+
+djangogirls
+├── manage.py
+├── mysite
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── myvenv
+│   └── ...
+└── requirements.txt
+Note: in your directory structure, you will also see your venv directory that we created before.
+
+
